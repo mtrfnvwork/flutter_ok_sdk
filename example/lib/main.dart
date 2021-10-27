@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ok_sdk/flutter_ok_sdk.dart';
 
@@ -23,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     try {
       final okAuth = await FlutterOkSdk.login();
+
       setState(() {
         token = okAuth.token;
         secret = okAuth.secret;
@@ -38,19 +39,19 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
-          actions: <Widget>[
+          actions: [
             IconButton(
-              icon: Icon(Icons.assignment_ind),
+              icon: const Icon(Icons.assignment_ind),
               onPressed: initPlatformState,
             )
           ],
         ),
         body: Center(
           child: Column(
-            children: <Widget>[
-              Text('Token: $token'),
-              Text('Secret: $secret'),
-            ],
+            children: [
+            Text('Token: $token'),
+            Text('Secret: $secret'),
+          ],
           )
         ),
       ),

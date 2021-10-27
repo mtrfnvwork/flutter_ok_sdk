@@ -46,12 +46,14 @@ class FlutterOkSdkPlugin : MethodCallHandler, PluginRegistry.ActivityResultListe
                     getResourceFromContext(activity!!.applicationContext, "ok_sdk_app_key")
             )
 
-            okLoginManager.requestAuthorization(activity!!,
-                    getResourceFromContext(activity!!.applicationContext, "ok_redirect_url"),
-                    OkAuthType.WEBVIEW_OAUTH,
-                    OkScope.VALUABLE_ACCESS
+            okLoginManager.requestAuthorization(
+                activity!!,
+                getResourceFromContext(activity!!.applicationContext, "ok_redirect_url"),
+                OkAuthType.ANY,
+                OkScope.LONG_ACCESS_TOKEN,
+                OkScope.VALUABLE_ACCESS,
+                OkScope.PHOTO_CONTENT
             )
-//            result.success("Android ${android.os.Build.VERSION.RELEASE}")
         } else {
             result.notImplemented()
         }
@@ -59,9 +61,11 @@ class FlutterOkSdkPlugin : MethodCallHandler, PluginRegistry.ActivityResultListe
 
     private fun getResourceFromContext(context: Context, resName: String): String {
         val stringRes = context.resources.getIdentifier(resName, "string", context.packageName)
+
         if (stringRes == 0) {
             throw IllegalArgumentException(String.format("The 'R.string.%s' value it's not defined in your project's resources file.", resName))
         }
+
         return context.getString(stringRes)
     }
 
@@ -69,13 +73,16 @@ class FlutterOkSdkPlugin : MethodCallHandler, PluginRegistry.ActivityResultListe
         override fun onSuccess(json: JSONObject) {
             try {
                 println(json)
+
                 val token = json.getString("access_token")
                 val secretKey = json.getString("session_secret_key")
                 val expires_in = json.getString("expires_in")
                 val hashmap = HashMap<String, String>()
+
                 hashmap["access_token"] = token
                 hashmap["secret"] = secretKey
                 hashmap["expires_in"] = expires_in
+
                 methodChannelResult?.let {
                     it.success(hashmap)
                 }
